@@ -268,7 +268,7 @@ class TransactionController {
             update: { $inc: { stock: -element.quantity } },
           },
         });
-        console.log("----->", element._id, element.quantity);
+        console.log("----->", element.book, element.quantity);
       });
 
       const stockSave = await BookModel.bulkWrite(bulk);
