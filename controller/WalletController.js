@@ -41,7 +41,7 @@ class WalletController {
           await userFind.save();
           return sendResponse(
             res,
-            HTTP_STATUS.NOT_FOUND,
+            HTTP_STATUS.OK,
             "Successfully added money to wallet"
           );
         } else {

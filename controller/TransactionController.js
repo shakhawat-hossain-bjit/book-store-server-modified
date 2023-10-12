@@ -162,7 +162,7 @@ class TransactionController {
         return element.book;
       });
 
-      const booksInCart = await BookModel.find({
+      let booksInCart = await BookModel.find({
         _id: {
           $in: bookList,
         },
@@ -178,7 +178,9 @@ class TransactionController {
         );
       }
 
-      booksInCart.forEach((book) => {
+      // booksInCart = booksInCart.toObject();
+
+      booksInCart = booksInCart.map((book) => {
         const bookFound = cart.books.findIndex(
           (cartItem) => String(cartItem.book._id) === String(book._id)
         );
@@ -190,7 +192,10 @@ class TransactionController {
           );
         }
         book.stock -= cart.books[bookFound].quantity;
+        return book;
       });
+
+      console.log(booksInCart);
 
       let currentTime = new Date();
       let priceObj = {};
@@ -256,13 +261,14 @@ class TransactionController {
       }
 
       const bulk = [];
-      booksInCart.map((element) => {
+      priceAddedBooks.map((element) => {
         bulk.push({
           updateOne: {
-            filter: { _id: element },
-            update: { $set: { stock: element.stock } },
+            filter: { _id: element.book },
+            update: { $inc: { stock: -element.quantity } },
           },
         });
+        console.log("----->", element._id, element.quantity);
       });
 
       const stockSave = await BookModel.bulkWrite(bulk);
