@@ -74,10 +74,22 @@ class UserController {
       //   .limit(limit ? limit : 100);
       // const userCount = await UserModel.find().count();
 
-      const result = await AuthModel.findOne({ user: userId })
+      let result = await AuthModel.findOne({ user: userId })
         .select("-createdAt -updatedAt -__v -password")
         // .populate("user", "-password")
         .populate("user", "-createdAt -updatedAt -__v");
+
+      result = result.toObject();
+
+      let userResult = await UserModel.findOne({ _id: userId }).populate(
+        "wallet",
+        "-createdAt -updatedAt -__v"
+      );
+      console.log(userResult);
+
+      userResult = userResult.toObject();
+
+      result.wallet = userResult?.wallet;
 
       if (result?._id) {
         return sendResponse(
