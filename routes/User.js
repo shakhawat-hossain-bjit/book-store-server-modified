@@ -6,6 +6,13 @@ const routes = express();
 
 routes.get("/all", isAuthenticated, isAdmin, UserController.getAll);
 
+routes.get(
+  "/get-by-id/:userId",
+  isAuthenticated,
+  // isAdmin,
+  UserController.getUserById
+);
+
 // we can't provide userId in the route here, because used userId for user Identification
 routes.patch(
   "/update/:id",
@@ -19,7 +26,7 @@ routes.delete(
   "/delete/:id",
   isAuthenticated,
   isAdmin,
-  userValidator.delete,
+  // userValidator.delete,
   UserController.delete
 );
 
