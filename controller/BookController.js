@@ -246,17 +246,22 @@ class BookController {
         stock,
       } = req.body;
 
+      console.log("book req.file ", req.file);
+
       const existingProduct = await BookModel.findOne({
         $or: [{ isbn: isbn }, { title: title }],
       });
 
-      if (existingProduct) {
-        return sendResponse(
-          res,
-          HTTP_STATUS.UNPROCESSABLE_ENTITY,
-          "Book with same title or isbn already exists"
-        );
-      }
+      // if (existingProduct) {
+      //   return sendResponse(
+      //     res,
+      //     HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      //     "Book with same title or isbn already exists"
+      //   );
+      // }
+
+      const image = [req.file.filename];
+      console.log(image);
 
       const newBook = await BookModel.create({
         author,
@@ -273,6 +278,7 @@ class BookController {
         reviewCount,
         category,
         stock,
+        images: image,
       });
       // console.log(newBook);
 

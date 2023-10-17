@@ -3,6 +3,7 @@ const routes = express();
 const BookController = require("../controller/BookController");
 const { bookValidator } = require("../middleware/validation");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
+const upload = require("../utils/file");
 
 routes.get("/all", BookController.getAll);
 
@@ -12,8 +13,8 @@ routes.post(
   "/create",
   isAuthenticated,
   isAdmin,
-  bookValidator.add,
-
+  upload.single("image"),
+  // bookValidator.add,
   BookController.create
 );
 
