@@ -1,6 +1,7 @@
 const multer = require("multer");
-const fileTypes = require("../constants/fileTypes");
+
 const path = require("path");
+const { imgType } = require("../constants/fileTypes");
 
 const upload = multer({
   limits: {
@@ -27,7 +28,7 @@ const upload = multer({
     if (file) {
       const extension = path.extname(file.originalname);
       req.file_extension = extension;
-      if (fileTypes.includes(extension)) {
+      if (imgType.includes(extension)) {
         callback(null, true);
       } else {
         callback(null, false);
