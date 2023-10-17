@@ -85,7 +85,7 @@ class UserController {
         "wallet",
         "-createdAt -updatedAt -__v"
       );
-      console.log(userResult);
+      // console.log(userResult);
 
       userResult = userResult.toObject();
 
@@ -167,10 +167,11 @@ class UserController {
         );
       }
 
-      const { userName, firstName, lastName, address, phone, role } = req.body;
+      const { userName, firstName, lastName, address, phone, role, image } =
+        req.body;
       const { id } = req.params;
 
-      console.log(role, phone);
+      console.log(role, phone, image);
 
       const userFind = await UserModel.findOne({ _id: id });
       if (!userFind) {
@@ -187,7 +188,7 @@ class UserController {
 
       const userUpdate = await UserModel.updateOne(
         { _id: id },
-        { $set: { userName, phone, address, firstName, lastName } }
+        { $set: { userName, phone, address, firstName, lastName, image } }
       );
 
       const authUpdate = await AuthModel.updateOne(
@@ -195,8 +196,8 @@ class UserController {
         { $set: { role: role } }
       );
 
-      console.log(userUpdate);
-      console.log(authUpdate);
+      // console.log(userUpdate);
+      // console.log(authUpdate);
 
       if (userUpdate?.modifiedCount) {
         return sendResponse(

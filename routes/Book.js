@@ -13,6 +13,7 @@ routes.post(
   isAuthenticated,
   isAdmin,
   bookValidator.add,
+
   BookController.create
 );
 

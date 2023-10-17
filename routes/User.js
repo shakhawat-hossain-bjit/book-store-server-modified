@@ -17,7 +17,7 @@ routes.get(
 routes.patch(
   "/update/:id",
   isAuthenticated,
-  isAdmin,
+  // isAdmin,
   userValidator.update,
   UserController.update
 );

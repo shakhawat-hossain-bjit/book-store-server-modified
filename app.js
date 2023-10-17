@@ -13,7 +13,9 @@ const transactionRoute = require("./routes/Transaction");
 const reviewRoute = require("./routes/Review");
 const walletRoute = require("./routes/Wallet");
 const discountRoute = require("./routes/Discount");
+const FileRouter = require("./routes/File");
 const { getTime } = require("./server/logFile");
+const multer = require("multer");
 dotenv.config("dotenv");
 
 app.use(cors({ origin: "*" }));
@@ -30,6 +32,9 @@ app.use((err, req, res, next) => {
       "Invalid JSON provided"
     );
   }
+  if (err instanceof multer.MulterError) {
+    return sendResponse(res, HTTP_STATUS.NOT_FOUND, err.message);
+  }
   next();
 });
 
@@ -41,6 +46,7 @@ app.use("/transaction", transactionRoute);
 app.use("/reviews", reviewRoute);
 app.use("/wallet", walletRoute);
 app.use("/discount", discountRoute);
+app.use("/files", FileRouter);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");
