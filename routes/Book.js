@@ -7,7 +7,7 @@ const upload = require("../utils/file");
 
 routes.get("/all", BookController.getAll);
 
-routes.get("/find-by-id/:bookId", BookController.getBookById);
+routes.get("/find-by-id/:bookId", BookController.getBookByIdAggregation);
 
 routes.post(
   "/create",

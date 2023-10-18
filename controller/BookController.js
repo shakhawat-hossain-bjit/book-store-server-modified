@@ -3,6 +3,7 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const BookModel = require("../model/Book");
 const { sendResponse } = require("../utils/common");
 const { insertInLog } = require("../server/logFile");
+const { default: mongoose } = require("mongoose");
 
 class BookController {
   async getAll(req, res) {
@@ -200,6 +201,170 @@ class BookController {
       console.log(discountSum, book.newPrice);
 
       book.discountPercentage = discountSum;
+
+      return sendResponse(
+        res,
+        HTTP_STATUS.OK,
+        "Successfully got the book",
+        book
+      );
+    } catch (error) {
+      console.log(error);
+      return sendResponse(
+        res,
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "Internal server error"
+      );
+    }
+  }
+
+  async getBookByIdAggregation(req, res) {
+    try {
+      insertInLog(req?.originalUrl, req.query, req.params, req.body);
+      const { bookId } = req.params;
+      // let book = await BookModel.findOne({ _id: bookId })
+      //   .populate("discounts", " -books -createdAt -updatedAt  -__v ")
+      //   .populate("reviews", " -__v ")
+      //   .select("-createdAt -updatedAt -__v");
+      let book = await BookModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(bookId),
+          },
+        },
+        {
+          $lookup: {
+            from: "reviews", // Assuming there's a collection called "reviews"
+            localField: "reviews",
+            foreignField: "_id",
+            as: "review_detail", // The field where the review details will be stored
+          },
+        },
+        {
+          $unwind: "$review_detail",
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "review_detail.userId",
+            foreignField: "_id",
+            as: "review_detail.reviewer",
+          },
+        },
+        {
+          $addFields: {
+            "review_detail.userInfo": {
+              $arrayElemAt: ["$review_detail.reviewer", 0],
+            },
+          },
+        },
+
+        {
+          $group: {
+            _id: "$_id",
+            title: { $first: "$title" },
+            author: { $first: "$author" },
+            price: { $first: "$price" },
+            pages: { $first: "$pages" },
+            images: { $first: "$images" },
+            stock: { $first: "$stock" },
+            rating: { $first: "$rating" },
+            country: { $first: "$country" },
+            review_detail: { $push: "$review_detail" },
+            users: { $first: "$user_info" },
+          },
+        },
+
+        {
+          $project: {
+            title: 1,
+            author: 1,
+            price: 1,
+            pages: 1,
+            images: 1,
+            stock: 1,
+            rating: 1,
+            country: 1,
+            "review_detail._id": 1,
+            "review_detail.content": 1,
+            "review_detail.rating": 1,
+            "review_detail.updatedAt": 1,
+            "review_detail.userInfo.userName": 1,
+            "review_detail.userInfo._id": 1,
+          },
+        },
+
+        // {
+        //   $project: {
+        //     title: 1,
+        //     author: 1,
+        //     "review_detail._id": 1,
+        //     "review_detail.content": 1,
+        //     "review_detail.rating": 1,
+        //     "review_detail.userInfo": 1,
+        //   },
+        // },
+        // {
+        //   $unwind: "reveiwer",
+        // },
+
+        // {
+        //   $lookup: {
+        //     from: "users",
+        //     localField: "review_detail.userId",
+        //     foreignField: "_id",
+        //     as: "user_info",
+        //   },
+        // },
+        // {
+        //   $project: {
+        //     review_detail: 1,
+        //     user_info: 1,
+        //   },
+        // },
+        // {
+        //   $group: {
+        //     _id: "$_id",
+        //     // title: "title",
+        //     // otherFields: { $first: "$otherFields" }, // Assuming there are other fields that need to be preserved
+        //     review_detail: { $push: "$review_detail" }, // Rewinding the unwound reviews array
+        //     users: { $first: "$user_info" }, // Preserving the user details
+        //   },
+        // },
+      ]);
+
+      // let book = await BookModel.aggregate([
+      //   {
+      //     $lookup: {
+      //       from: "reviews",
+      //       localField: "reviews",
+      //       foreignField: "_id",
+      //       as: "review_detail",
+      //     },
+      //   },
+      //   {
+      //     $unwind: "$review_detail",
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "users",
+      //       localField: "review_detail.userId",
+      //       foreignField: "_id",
+      //       as: "user_info",
+      //     },
+      //   },
+      //   {
+      //     $group: {
+      //       _id: "$_id",
+      //       title: { $first: "$title" }, // Assuming there's a field called "title"
+      //       price: { $first: "$price" }, // Assuming there's a field called "title"
+      //       author: { $first: "$author" }, // Assuming there's a field called "title"
+      //       // otherFields: { $first: "$otherFields" }, // Assuming there are other fields that need to be preserved
+      //       review_detail: { $push: "$review_detail" },
+      //       users: { $first: "$user_info" },
+      //     },
+      //   },
+      // ]);
 
       return sendResponse(
         res,
