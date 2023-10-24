@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const HTTP_STATUS = require("../constants/statusCodes");
 const { sendResponse } = require("../utils/common");
-const WalletModel = require("../model/wallet");
+const WalletModel = require("../model/Wallet");
 const UserModel = require("../model/User");
 const { insertInLog } = require("../server/logFile");
 

@@ -57,10 +57,10 @@ app.use("*", (req, res) => {
 });
 
 databaseConnection(() => {
-  app.listen(8000, () => {
+  app.listen(8080, () => {
     let date = new Date();
     console.log(
-      `App is running on port 8000 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `
+      `App is running on port 8080 ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} `
     );
     getTime();
   });

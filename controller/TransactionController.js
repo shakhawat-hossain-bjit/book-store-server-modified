@@ -4,7 +4,7 @@ const BookModel = require("../model/Book");
 const HTTP_STATUS = require("../constants/statusCodes");
 const { sendResponse } = require("../utils/common");
 const UserModel = require("../model/User");
-const WalletModel = require("../model/wallet");
+const WalletModel = require("../model/Wallet");
 const { insertInLog } = require("../server/logFile");
 const { validationResult } = require("express-validator");
 
