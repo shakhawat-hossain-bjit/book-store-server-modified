@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 var cors = require("cors");
 const dotenv = require("dotenv");
+dotenv.config("dotenv");
 const databaseConnection = require("./db/config");
 const HTTP_STATUS = require("./constants/statusCodes");
 const { sendResponse } = require("./utils/common");
@@ -14,9 +15,9 @@ const reviewRoute = require("./routes/Review");
 const walletRoute = require("./routes/Wallet");
 const discountRoute = require("./routes/Discount");
 const FileRouter = require("./routes/File");
+const nahidRouter = require("./routes/nahidFile");
 const { getTime } = require("./server/logFile");
 const multer = require("multer");
-dotenv.config("dotenv");
 
 app.use(cors({ origin: "*" }));
 app.use(express.json()); // Parses data as JSON
@@ -47,6 +48,7 @@ app.use("/reviews", reviewRoute);
 app.use("/wallet", walletRoute);
 app.use("/discount", discountRoute);
 app.use("/files", FileRouter);
+app.use("/aws", nahidRouter);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");
