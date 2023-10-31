@@ -15,7 +15,7 @@ const reviewRoute = require("./routes/Review");
 const walletRoute = require("./routes/Wallet");
 const discountRoute = require("./routes/Discount");
 const FileRouter = require("./routes/File");
-const nahidRouter = require("./routes/nahidFile");
+const awsRouter = require("./routes/Aws");
 const { getTime } = require("./server/logFile");
 const multer = require("multer");
 
@@ -48,7 +48,7 @@ app.use("/reviews", reviewRoute);
 app.use("/wallet", walletRoute);
 app.use("/discount", discountRoute);
 app.use("/files", FileRouter);
-app.use("/aws", nahidRouter);
+app.use("/aws", awsRouter);
 
 app.get("/", async (req, res) => {
   return sendResponse(res, HTTP_STATUS.OK, "Route is working");

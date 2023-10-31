@@ -11,10 +11,10 @@ routes.get("/find-by-id/:bookId", BookController.getBookById);
 
 routes.post(
   "/create",
-  isAuthenticated,
-  isAdmin,
+  // isAuthenticated,
+  // isAdmin,
   upload.single("image"),
-  // bookValidator.add,
+  bookValidator.add,
   BookController.create
 );
 

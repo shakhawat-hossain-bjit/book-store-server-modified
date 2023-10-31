@@ -3,6 +3,7 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const BookModel = require("../model/Book");
 const { sendResponse } = require("../utils/common");
 const { insertInLog } = require("../server/logFile");
+const uploadFile = require("../utils/awsConfig");
 
 class BookController {
   async getAll(req, res) {
@@ -246,7 +247,9 @@ class BookController {
         stock,
       } = req.body;
 
-      console.log("book req.file ", req.file);
+      // console.log("book req.file ", req.file);
+
+      const response = await uploadFile(req.file, "books_images");
 
       const existingProduct = await BookModel.findOne({
         $or: [{ isbn: isbn }, { title: title }],
