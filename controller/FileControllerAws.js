@@ -1,5 +1,5 @@
 const HTTP_STATUS = require("../constants/statusCodes");
-const uploadFile = require("../utils/awsConfig");
+const { uploadFile } = require("../utils/awsMethod");
 const { sendResponse } = require("../utils/common");
 
 class FileControllerAws {
@@ -7,7 +7,7 @@ class FileControllerAws {
     try {
       const file = req.file;
       const response = await uploadFile(file, "uploadFromAPI"); // Await the uploadFile function
-      console.log(response);
+      console.log("response ", response);
       return sendResponse(res, HTTP_STATUS.OK, response);
     } catch (error) {
       // Handle errors here

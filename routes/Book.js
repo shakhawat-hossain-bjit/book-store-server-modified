@@ -20,16 +20,16 @@ routes.post(
 
 routes.patch(
   "/update/:bookId",
-  isAuthenticated,
-  isAdmin,
+  // isAuthenticated,
+  // isAdmin,
   bookValidator.update,
   BookController.update
 );
 
 routes.delete(
   "/delete/:bookId",
-  isAuthenticated,
-  isAdmin,
+  // isAuthenticated,
+  // isAdmin,
   bookValidator.delete,
   BookController.delete
 );

@@ -3,7 +3,7 @@ const HTTP_STATUS = require("../constants/statusCodes");
 const BookModel = require("../model/Book");
 const { sendResponse } = require("../utils/common");
 const { insertInLog } = require("../server/logFile");
-const uploadFile = require("../utils/awsConfig");
+const { uploadFile, deleteFile } = require("../utils/awsMethod");
 
 class BookController {
   async getAll(req, res) {
@@ -248,8 +248,13 @@ class BookController {
       } = req.body;
 
       // console.log("book req.file ", req.file);
+      // const image = [req.file.filename];
+      // console.log(image);
 
-      const response = await uploadFile(req.file, "books_images");
+      const url = await uploadFile(req.file, "books_images");
+      // console.log(url);
+      const image = [`${url}`];
+      // console.log(image);
 
       const existingProduct = await BookModel.findOne({
         $or: [{ isbn: isbn }, { title: title }],
@@ -262,9 +267,6 @@ class BookController {
       //     "Book with same title or isbn already exists"
       //   );
       // }
-
-      const image = [req.file.filename];
-      console.log(image);
 
       const newBook = await BookModel.create({
         author,
@@ -388,8 +390,21 @@ class BookController {
 
       const { bookId } = req.params;
 
+      let book = await BookModel.findOne({ _id: bookId });
+
+      // await book?.images?.map(async (x) => {
+      //   await deleteFile(x);
+      // });
+
+      await Promise.all(
+        book?.images?.map(async (x) => {
+          await deleteFile(x);
+        })
+      );
+
       let bookDeleted = await BookModel.deleteOne({ _id: bookId });
-      // console.log(bookDeleted);
+
+      console.log("bookDeleted", bookDeleted);
 
       if (bookDeleted?.deletedCount) {
         return sendResponse(res, HTTP_STATUS.OK, "Book deleted successfully");
