@@ -5,7 +5,7 @@ const FileControllerAws = require("../controller/FileControllerAws");
 
 routes.post(
   "/upload-file",
-  upload.single("file"),
+  upload.single("myFile"),
   FileControllerAws.uploadFileAws
 );
 

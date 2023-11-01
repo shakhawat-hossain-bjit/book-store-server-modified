@@ -10,8 +10,11 @@ const { sendResponse } = require("../utils/common");
 class FileControllerAws {
   async uploadFileAws(req, res) {
     try {
-      const file = req.file;
-      const response = await uploadFile(file, "uploadFromAPI"); // Await the uploadFile function
+      // const { fileNameBody } = req;
+      console.log("------------------------- ", req);
+      // console.log("req.fileName ", req.image);
+      console.log("req.file ", req.file);
+      const response = await uploadFile(req.file, "uploadFromAPI"); // Await the uploadFile function
       console.log("response ", response);
       return sendResponse(res, HTTP_STATUS.OK, response);
     } catch (error) {

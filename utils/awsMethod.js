@@ -11,8 +11,8 @@ const {
 
 const uploadFile = async function (file, folderName) {
   const s3Client = new S3Client({ region: process.env.AWS_REGION });
-  // console.log(file);
-  const key = `images/${folderName}/${Date.now()}-${file.originalname}`;
+  console.log(file);
+  const key = `images/${folderName}/${Date.now()}-${file?.originalname}`;
   const s3Params = {
     Bucket: process.env.S3_BUCKET,
     Key: key,

@@ -249,7 +249,7 @@ class BookController {
 
       // console.log("book req.file ", req.file);
       // const image = [req.file.filename];
-      // console.log(image);
+      console.log("req.file ", req.file);
 
       const url = await uploadFile(req.file, "books_images");
       // console.log(url);
