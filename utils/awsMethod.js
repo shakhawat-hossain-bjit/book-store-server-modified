@@ -5,11 +5,13 @@ const {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  ListObjectsV2Command,
+  PutObjectAclCommand,
 } = require("@aws-sdk/client-s3");
 
 const uploadFile = async function (file, folderName) {
   const s3Client = new S3Client({ region: process.env.AWS_REGION });
-  console.log(file);
+  // console.log(file);
   const key = `images/${folderName}/${Date.now()}-${file.originalname}`;
   const s3Params = {
     Bucket: process.env.S3_BUCKET,
@@ -37,6 +39,32 @@ const deleteFile = async function (key) {
     console.error(`Error deleting file: ${error.message}`);
     throw error;
   }
+};
+
+const playTemporaryVideo = async function (videoKey) {
+  console.log("url ", videoKey);
+  const s3Client = new S3Client({ region: process.env.AWS_REGION });
+
+  // Set the parameters
+  // const bucketName = "your-bucket-name";
+  // const keyName = "your-video-file-name";
+  // const objectParams = { Bucket: bucketName, Key: keyName };
+
+  // Set the ACL to private
+  const aclParams = {
+    Bucket: process.env.S3_BUCKET,
+    Key: videoKey,
+    ACL: "private",
+  };
+  const aclData = await s3Client.send(new PutObjectAclCommand(aclParams));
+  console.log("Successfully set video ACL to private ", aclData);
+
+  // const videoUrl = s3.getSignedUrl("getObject", {
+  //   Bucket: process.env.S3_BUCKET,
+  //   Key: videoKey,
+  //   Expires: 60 * 5, // URL expiration time in seconds (adjust as needed)
+  // });
+  // return videoUrl;
 };
 
 // const deleteFolder = async function (folderName) {
@@ -71,4 +99,39 @@ const deleteFile = async function (key) {
 //   }
 // };
 
-module.exports = { uploadFile, deleteFile };
+const getAllFilesInFolder = async function (folderName) {
+  try {
+    console.log(`Fetching files in folder: ${folderName}`);
+    const s3Client = new S3Client({ region: process.env.AWS_REGION });
+    const s3Params = {
+      Bucket: process.env.S3_BUCKET,
+      Prefix: folderName,
+    };
+
+    const data = await s3Client.send(new ListObjectsV2Command(s3Params));
+
+    console.log(" data.Contents ", data.Contents);
+
+    if (data && data.Contents) {
+      const fileUrls = data.Contents.map((object) => {
+        return `${process.env.S3_BASE_URL}/${object.Key}`;
+      });
+      console.log(`Files in folder: ${folderName}`);
+      console.log(fileUrls);
+      return fileUrls;
+    } else {
+      console.log("No files found in the folder. The folder may not exist.");
+      return [];
+    }
+  } catch (error) {
+    console.error(`Error listing files in folder: ${error.message}`);
+    throw error;
+  }
+};
+
+module.exports = {
+  uploadFile,
+  deleteFile,
+  getAllFilesInFolder,
+  playTemporaryVideo,
+};

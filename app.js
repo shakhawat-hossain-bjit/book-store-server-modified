@@ -19,6 +19,10 @@ const awsRouter = require("./routes/Aws");
 const { getTime } = require("./server/logFile");
 const multer = require("multer");
 
+//ejs
+// app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
+
 app.use(cors({ origin: "*" }));
 app.use(express.json()); // Parses data as JSON
 app.use(express.text()); // Parses data as text

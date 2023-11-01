@@ -1,5 +1,10 @@
 const HTTP_STATUS = require("../constants/statusCodes");
-const { uploadFile } = require("../utils/awsMethod");
+const {
+  uploadFile,
+  playVideo,
+  getAllFilesInFolder,
+  playTemporaryVideo,
+} = require("../utils/awsMethod");
 const { sendResponse } = require("../utils/common");
 
 class FileControllerAws {
@@ -18,6 +23,25 @@ class FileControllerAws {
         "Internal server error"
       );
     }
+  }
+
+  async getAllFiles(req, res) {
+    const { folder } = req.params;
+    let fileUrls = await getAllFilesInFolder(folder);
+    console.log("res ", fileUrls);
+    return sendResponse(res, HTTP_STATUS.OK, fileUrls);
+    // let videoUrl = await playVideo(fileUrl);
+    // console.log("videoUrl ", videoUrl);
+
+    // res.render("playVideo", { videoUrl });
+  }
+
+  async playVideo(req, res) {
+    const { fileUrl } = req.body;
+
+    let fileUrls = await playTemporaryVideo(fileUrl);
+    console.log("res ", fileUrls);
+    return sendResponse(res, HTTP_STATUS.OK, fileUrls);
   }
 }
 
